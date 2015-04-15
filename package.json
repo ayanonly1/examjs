@@ -1,0 +1,21 @@
+{
+  "name": "ExamJS",
+  "version": "0.0.1",
+  "description": "this is a online examination system built by node-express",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ayanonly1/examjs.git"
+  },
+  "author": "ayanonly1,sguha-work",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/ayanonly1/examjs/issues"
+  },
+  "dependencies" : {
+    "express":"3.x"
+  }
+}
