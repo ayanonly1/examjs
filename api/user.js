@@ -115,10 +115,40 @@ module.exports = {
 			return {error : "user doesnot exists"};
 		}
 		var passwordFromDatabase = this.getUserPasswordFromUserEmail(userEmail.trim());
+		if(passwordFromDatabase != userPassword.trim()) {
+			return {error : "wrong password or user id"};	
+		}
+		return this.getUserDataFromUserEmail(userEmail);
 	},
 
-	getUserPasswordFromUserEmail : function() {
+	// this function returns total user information of a user from database by userEmail
+	getUserDataFromUserEmail : function(userEmail) {
+		var userObject = {};
+		var db = new locallydb('./examdb');
+		var user = db.collection('user');
+		var userDetails = db.collection('userDetails');
 		
+		var userData = user.where("(@userEmail == '"+userEmail.trim()+"')")[0];
+		var userDetailsData = userDetails.where("(@userId == '"+userData.userId+"')")[0];
+
+		userObject = {
+		  	userId : userData.userId,
+			userEmail : userData.userId,
+			role : userData.role,//0-normal user, 1- admin, 2 - student
+			name : userDetailsData.name,
+		  	mobile : userDetailsData.mobile,
+			dob : userDetailsData.dob,// timestamp
+			address : userDetailsData.address,
+			organisation : userDetailsData.organisation
+    	}
+    	return userObject;
+	},
+
+	// this function fetch user's password from userEmail
+	getUserPasswordFromUserEmail : function(userEmail) {
+		var db = new locallydb('./examdb');
+		var user = db.collection('user');
+		return user.where("(@userEmail == '"+userEmail.trim()+"')")[0].password;
 	},
 	checkUserIsLoggedIn : function() {
 
