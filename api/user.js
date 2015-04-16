@@ -3,7 +3,7 @@
   *********** user related collections ************
   user : {
   	userId : "",
-	loginName : "",
+	userEmail : "",
 	role : "",//0-normal user, 1- admin, 2 - student
 	password : ""
   }
@@ -13,7 +13,9 @@
 	name : "",
 	dob : "",// timestamp
 	address : "",
-	organisation : ""
+	mobile : "",
+	organisation : "",
+	registeredOn : ""// timestamp
   }
 
   userLoginDetails : {
@@ -27,10 +29,11 @@
   ***** total userObject expected to receive from frontend
 	userObject : {
 	  	userId : "",
-		loginName : "",
+		userEmail : "",
 		role : "",//0-normal user, 1- admin, 2 - student
 		password : ""
 	  	name : "",
+	  	mobile : "",
 		dob : "",// timestamp
 		address : "",
 		organisation : ""
@@ -43,12 +46,28 @@ module.exports = {
 		if(!this.checkUserData(userObject)) {
 			return false;
 		}
-		var db = new locallydb('./examdb');
-		var user = db.collection('user');
-		var userDetails = db.collection('userDetails')
-		var dataForUserCollection = {
-			userId
+		if(this.checkUserEmailAlreadyExistsOrNot()) { // if user email exists in database skipping registration process
+			return false;
 		}
+		var newUserId = this.getNewUserId();
+		
+		var dataForUserCollection = {
+			userId : newUserId,
+			userEmail : userObject.userEmail.trim(),
+			role : ((typeof userObject.role == "undefined")?2:userObject.role),
+			password : userObject.password.trim()
+		};
+
+		var dataForUserDetailsCollection = {
+			userId : newUserId,
+			name : ((typeof userObject.name == "undefined" || userObject.name == "")?"":userObject.name.trim()),
+			dob : "",
+			mobile : ((typeof userObject.mobile == "undefined" || userObject.mobile == "")?"":userObject.mobile.rim()),
+			address : ((typeof userObject.address == "undefined" || userObject.address == "")?"":userObject.address.trim()),
+			organisation : ((typeof userObject.organisation == "undefined" || userObject.organisation == "")?"":userObject.organisation.trim()),
+			registeredOn : ((new Date().getTime())/1000)// timestamp
+		};
+		return this.insertUserDataToDatabase(dataForUserCollection, dataForUserDetailsCollection);
 	},
 
 	// this function checks wheather the userObject received is valid or not
@@ -56,16 +75,35 @@ module.exports = {
 		if(JSON.stringify(userObject)=="{}") {
 			return false;
 		}
-		if(typeof userObject.loginName == "undefined" || userObject.loginName == "" || typeof userObject.password=="undefined" || userObject.password=="") {
+		if(typeof userObject.userEmail == "undefined" || userObject.userEmail == "" || typeof userObject.password=="undefined" || userObject.password=="") {
 			retuirn false;
 		}
 		return true;
 	},
 
 	// this function checks wheather the given user name already exists in database or not
-	checkUserNameAlreadyExistsOrNot : function(userName) {
-
+	checkUserEmailAlreadyExistsOrNot : function(userEmail) {
+		var db = new locallydb('./examdb');
+		var user = db.collection('user');
+		return user.where("(@userEmail == '"+userEmail.trim()+"')").length;
 	},
+
+	// this function returns the userId which will be associated with the newly registered user
+	getNewUserId : function() {
+		var db = new locallydb('./examdb');
+		var user = db.collection('user');
+		return user.items.length();
+	},
+
+	// this function receives the user's data in two objects and put them to proper collection
+	insertUserDataToDatabase : function(userObject, userDetailsObject) {
+		var db = new locallydb('./examdb');
+		var user = db.collection('user');
+		var userDetails = db.collection('userDetails')
+		user.insert(userObject);
+		userDetails.insert(userDetailsObject);
+		return true;
+	}
 
 	// this function will register user from a csv file
 	signUpFromFile : function() {
