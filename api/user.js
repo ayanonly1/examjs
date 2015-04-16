@@ -46,7 +46,7 @@ module.exports = {
 		if(!this.checkUserData(userObject)) {
 			return false;
 		}
-		if(this.checkUserEmailAlreadyExistsOrNot()) { // if user email exists in database skipping registration process
+		if(this.checkUserEmailAlreadyExistsOrNot(userObject.userEmail)) { // if user email exists in database skipping registration process
 			return false;
 		}
 		var newUserId = this.getNewUserId();
@@ -76,7 +76,7 @@ module.exports = {
 			return false;
 		}
 		if(typeof userObject.userEmail == "undefined" || userObject.userEmail == "" || typeof userObject.password=="undefined" || userObject.password=="") {
-			retuirn false;
+			return false;
 		}
 		return true;
 	},
@@ -110,8 +110,15 @@ module.exports = {
 
 	},
 
-	login : function() {
+	login : function(userEmail, userPassword) {
+		if(!this.checkUserEmailAlreadyExistsOrNot(userEmail)) {
+			return {error : "user doesnot exists"};
+		}
+		var passwordFromDatabase = this.getUserPasswordFromUserEmail(userEmail.trim());
+	},
 
+	getUserPasswordFromUserEmail : function() {
+		
 	},
 	checkUserIsLoggedIn : function() {
 
