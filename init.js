@@ -4,7 +4,7 @@ var server   = require("./server");
 var locallydb = require('locallydb');//creating localdb instance
 
 
-var question = require('./api/questions.js')
+var question = require('./api/questions.js');
 
 
 applicationMain.get('/', function (req, res) {

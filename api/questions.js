@@ -24,5 +24,22 @@
 
 */
 module.exports = {
-	
+	insertQuestionToDatabase : function(questionObject) {
+
+	},
+	insertCategoryToDatabase : function(categoryObject) {
+
+	},
+	insertQuestionToCategoryToDatabase : function(questionToCategoryObject) {
+
+	},
+	insertFromFile : function(filePath) {
+		var fileObject = require('fs');
+		fileObject.readFile(filePath, function(err, data) {
+			var csvParseObject = require('csv-parse');
+			parse(data,{comment : '#'}, function() {
+				
+			});
+		});
+	}
 };
