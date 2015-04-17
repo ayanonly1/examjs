@@ -40,7 +40,28 @@ module.exports = {
 	user : {},
 	question : {
 		insertQuestionToDatabase : function(questionObject) {
-			
+			var db = new locallydb(this.databaseName);
+			var questionsToCategory = db.collection('questionToCategory');
+			question.insert(questionObject);
+			return true;
+		},
+		insertCategoryObject : function(categoryObject) {
+			var db = new locallydb(this.databaseName);
+			var category = db.collection('category');
+			category.insert(categoryObject);
+			return true;
+		},
+		insertQuestionToCategoryObject : function(questionToCategoryObject) {
+			var db = new locallydb(this.databaseName);
+			var questionToCategory = db.collection('questionToCategory');
+			questionToCategory.insert(questionToCategoryObject);
+			return true;
+		},
+		getQuestionsFromCategoryIdArray : function(categoryIdArray) {
+			for(var index in categoryIdArray) {
+				var categoryId = categoryIdArray[index];
+			}
 		}
+
 	}
 };
