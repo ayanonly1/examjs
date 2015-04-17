@@ -58,10 +58,30 @@ module.exports = {
 			return true;
 		},
 		getQuestionsFromCategoryIdArray : function(categoryIdArray) {
+			var questionArray = [];
 			for(var index in categoryIdArray) {
 				var categoryId = categoryIdArray[index];
+				var questionIdArray = this.getQuestionIdArrayFromCategoryId(categoryId);
+				for(var questionIndex in questionIdArray) {
+					var questionId = questionIdArray[questionIndex];
+					var questionObject = this.getQuestionObjectFromQuestionId();
+					questionArray.push(questionObject);
+				}
 			}
+			return questionArray;
+		},
+		getQuestionObjectFromQuestionId : function(questionId) {
+			var db = new locallydb(this.databaseName);
+			var question = db.collection('question');
+			var questionObject = question.where("(@questionId == '"+questionId+"')")[0];
+			return questionObject;
 		}
+		getQuestionIdArrayFromCategoryId : function(categoryId) {
+			var db = new locallydb(this.databaseName);
+			var questionToCategory = db.collection('questionToCategory');
+			var questionIdArray = questionToCategory.where("(@categoryId == '"+categoryId+"')");
+			return questionIdArray;
+		},
 
 	}
 };
