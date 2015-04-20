@@ -33,21 +33,45 @@ module.exports = {
 	insertQuestionToCategoryToDatabase : function(questionToCategoryObject) {
 
 	},
+
 	insertFromFile : function(filePath) {
 		var fileObject = require('fs');
-		// fileObject.exists(filePath, function(exists) {
-		// 	if(exists) {
-		// 		console.log("file is there");
-		// 	} else {
-		// 		console.log("404");
-		// 	}
-		// });
-		fileObject.readFile(filePath, "utf-8", function(err, data) {
-			console.log(data);
-			// var csvParseObject = require('csv-parse');
-			// parse(data,{comment : '#'}, function(err, output) {
-			// 	console.log(JSON.stringify(output));
-			// });
+		var presentModule = this;
+		fileObject.exists(filePath, function(isExists){
+			if(isExists) {
+				fileObject.readFile(filePath, "utf-8", function(err, data) {
+					var questionsList = presentModule.parseCSVdata(data);
+					console.log(JSON.stringify(questionsList));
+				});		
+			} else {
+				presentModule.fileNotFound(filePath);
+			}
 		});
+		
+	},
+
+	parseCSVdata : function(data) {
+		var dataArray = data.split("\n");
+		var questionsList = [];
+		for(var index=1;index<dataArray.length; index++) {
+			var csvData = dataArray[index].split(",");
+			var questionObject = {
+				questionStatement : csvData[0],
+				option1 : csvData[1],
+				option2 : csvData[2],
+				option3 : csvData[3],
+				option4 : csvData[4],
+				option5 : csvData[5],
+				answer : csvData[6],
+				dificulty : csvData[7],
+				category : csvData[8]
+			};
+			questionsList.push(questionObject);
+		}
+		return questionsList;
+	},
+
+	fileNotFound : function(filePath) {
+		console.log("The given "+filePath+"  not found");
 	}
 };
