@@ -35,7 +35,14 @@ module.exports = {
 	},
 	insertFromFile : function(filePath) {
 		var fileObject = require('fs');
-		fileObject.readFile(filePath, function(err, data) {
+		// fileObject.exists(filePath, function(exists) {
+		// 	if(exists) {
+		// 		console.log("file is there");
+		// 	} else {
+		// 		console.log("404");
+		// 	}
+		// });
+		fileObject.readFile(filePath, "utf-8", function(err, data) {
 			console.log(data);
 			// var csvParseObject = require('csv-parse');
 			// parse(data,{comment : '#'}, function(err, output) {
