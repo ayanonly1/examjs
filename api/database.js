@@ -81,6 +81,11 @@ module.exports = {
 			var questionToCategory = db.collection('questionToCategory');
 			var questionIdArray = questionToCategory.where("(@categoryId == '"+categoryId+"')");
 			return questionIdArray;
+		},
+		getMaxIdFromQuestionList : function() {
+			var parentObject = module.exports;
+			var db = new parentObject.locallydb(parentObject.databaseName);
+			console.log(parentObject.databaseName);
 		}
 
 	}

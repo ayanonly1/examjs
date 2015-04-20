@@ -51,7 +51,9 @@ module.exports = {
 	},
 
 	insertQuestionListToDatabase : function(questionList) {
-		var database = require('./database');console.log("hello");return false;
+		var database = require('./database');
+		database.setDatabase('examdb');console.log("hello");
+		database.question.getMaxIdFromQuestionList();
 		for(var index in questionList) {
 
 		}
