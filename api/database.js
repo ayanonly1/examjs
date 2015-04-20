@@ -34,14 +34,14 @@ module.exports = {
 			return false;
 		}
 		this.databaseName = trimmedDatabaseName;
-		var db = new this.locallydb('./'+databaseName+);
+		var db = new this.locallydb('./'+databaseName);
 		return true;
-	}
+	},
 	user : {},
 	question : {
 		insertQuestionToDatabase : function(questionObject) {
 			var db = new locallydb(this.databaseName);
-			var questionsToCategory = db.collection('questionToCategory');
+			var question = db.collection('question');
 			question.insert(questionObject);
 			return true;
 		},
@@ -75,13 +75,13 @@ module.exports = {
 			var question = db.collection('question');
 			var questionObject = question.where("(@questionId == '"+questionId+"')")[0];
 			return questionObject;
-		}
+		},
 		getQuestionIdArrayFromCategoryId : function(categoryId) {
 			var db = new locallydb(this.databaseName);
 			var questionToCategory = db.collection('questionToCategory');
 			var questionIdArray = questionToCategory.where("(@categoryId == '"+categoryId+"')");
 			return questionIdArray;
-		},
+		}
 
 	}
 };

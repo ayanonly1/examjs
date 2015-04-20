@@ -41,13 +41,20 @@ module.exports = {
 			if(isExists) {
 				fileObject.readFile(filePath, "utf-8", function(err, data) {
 					var questionsList = presentModule.parseCSVdata(data);
-					console.log(JSON.stringify(questionsList));
+					presentModule.insertQuestionListToDatabase(questionsList);			
 				});		
 			} else {
 				presentModule.fileNotFound(filePath);
 			}
 		});
 		
+	},
+
+	insertQuestionListToDatabase : function(questionList) {
+		var database = require('./database');console.log("hello");return false;
+		for(var index in questionList) {
+
+		}
 	},
 
 	parseCSVdata : function(data) {
