@@ -52,10 +52,23 @@ module.exports = {
 
 	insertQuestionListToDatabase : function(questionList) {
 		var database = require('./database');
-		database.setDatabase('examdb');console.log("hello");
-		database.question.getMaxIdFromQuestionList();
-		for(var index in questionList) {
-
+		database.setDatabase('examdb');
+		for(var index=0; index<(questionList.length); index++) {
+			var maxQuestionId = database.question.getMaxIdFromQuestionList();
+			var questionObject = {
+				questionId : (maxQuestionId+1),
+				questionStatement : questionList[index].questionStatement,
+				option1 : questionList[index].option1,
+				option2 : questionList[index].option2,
+				option3 : questionList[index].option3,
+				option4 : questionList[index].option4,
+				option5 : questionList[index].option5,
+				answer : questionList[index].answer,
+				dificulty : questionList[index].dificulty,
+				createdOn : new Date().getTime(),
+				createdBy : questionList[index].createdBy
+			};
+			database.question.insertQuestionToDatabase(questionObject);console.log("inserted");
 		}
 	},
 
@@ -73,7 +86,8 @@ module.exports = {
 				option5 : csvData[5],
 				answer : csvData[6],
 				dificulty : csvData[7],
-				category : csvData[8]
+				createdBy : csvData[8],
+				category : csvData[9]
 			};
 			questionsList.push(questionObject);
 		}

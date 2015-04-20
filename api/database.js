@@ -27,20 +27,22 @@
 */
 module.exports = {
 	databseName : "",
-	locallydb : require('locallydb'),// creating localdb instance
+	
 	setDatabase : function(databaseName) {
+		var locallydb = require('locallydb');
 		var trimmedDatabaseName = databaseName.trim();
 		if(trimmedDatabaseName == "") {
 			return false;
 		}
 		this.databaseName = trimmedDatabaseName;
-		var db = new this.locallydb('./'+databaseName);
+		var db = new locallydb('./'+databaseName);
 		return true;
 	},
 	user : {},
 	question : {
 		insertQuestionToDatabase : function(questionObject) {
-			var db = new locallydb(this.databaseName);
+			var locallydb = require('locallydb');
+			var db = new locallydb(module.exports.databaseName);
 			var question = db.collection('question');
 			question.insert(questionObject);
 			return true;
@@ -83,9 +85,12 @@ module.exports = {
 			return questionIdArray;
 		},
 		getMaxIdFromQuestionList : function() {
+			var locallydb = require('locallydb')
 			var parentObject = module.exports;
-			var db = new parentObject.locallydb(parentObject.databaseName);
-			console.log(parentObject.databaseName);
+			var db = new locallydb(parentObject.databaseName);
+			var question = db.collection('question');
+			var questionList = question.where("@questionId > 0").items;
+			return (questionList.length==0)?0:(questionList.length-1);
 		}
 
 	}
