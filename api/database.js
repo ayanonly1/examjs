@@ -102,7 +102,8 @@ module.exports = {
 		},
 		getAllQuestionAsList : function() {
 			var locallydb = require('locallydb');
-			var db = new locallydb(this.databaseName);
+			var parentObject = module.exports;
+			var db = new locallydb(parentObject.databaseName);
 			var question = db.collection('question');
 			var questionObjectList = question.where("@questionId > 0").items;
 			var questionList = [];
@@ -113,7 +114,8 @@ module.exports = {
 		},
 		checkAndInsertCategory : function(category) {
 			var locallydb = require('locallydb');
-			var db = new locallydb(this.databaseName);
+			var parentObject = module.exports;
+			var db = new locallydb(parentObject.databaseName);
 			var categoryTable = db.collection('category');
 			var categoryObjectList = categoryTable.where("@categoryId > 0").items;
 			var flag = 0;
@@ -134,6 +136,19 @@ module.exports = {
 				flag = maxCategoryId;
 			}
 			return flag;
+		},
+		insertQuestionToCategoryRelation : function(categoryIdArray, questionId) {
+			var locallydb = require('locallydb');
+			var parentObject = module.exports;
+			var db = new locallydb(parentObject.databaseName);
+			var collection = db.collection('questionToCategory');
+			for(var index in categoryIdArray) {
+				var object = {
+					questionId : questionId,
+					categoryId : categoryIdArray[index]					
+				};
+				collection.insert(object);				
+			}
 		}
 
 	}

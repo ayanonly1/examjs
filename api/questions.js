@@ -80,7 +80,9 @@ module.exports = {
 	},
 
 	insertQuestionToCategoryRelation : function(categoryIdArray, questionId) {
-
+		var database = require('./database');
+		database.setDatabase('examdb');
+		database.question.insertQuestionToCategoryRelation(categoryIdArray, questionId);
 	},
 
 	checkAndInsertCategory : function(categoryArray) {
