@@ -85,12 +85,22 @@ module.exports = {
 			return questionIdArray;
 		},
 		getMaxIdFromQuestionList : function() {
-			var locallydb = require('locallydb')
+			var locallydb = require('locallydb');
 			var parentObject = module.exports;
 			var db = new locallydb(parentObject.databaseName);
 			var question = db.collection('question');
 			var questionList = question.where("@questionId > 0").items;
 			return (questionList.length==0)?0:(questionList.length-1);
+		},
+		getAllQuestionAsList : function() {
+			var locallydb = require('locallydb');
+			var question = db.collection('question');
+			var questionObjectList = question.where("@questionId > 0").items;
+			var questionList = [];
+			for(var index in questionObjectList) {
+				questionList.push(questionObjectList[index].questionStatement);
+			}
+			return questionList;
 		}
 
 	}

@@ -24,6 +24,7 @@
 
 */
 module.exports = {
+	questionListFromDatabase : [],
 	insertQuestionToDatabase : function(questionObject) {
 
 	},
@@ -68,8 +69,29 @@ module.exports = {
 				createdOn : new Date().getTime(),
 				createdBy : questionList[index].createdBy
 			};
-			database.question.insertQuestionToDatabase(questionObject);console.log("inserted");
+			if(!this.isQuestionExists(questionObject)) {
+				database.question.insertQuestionToDatabase(questionObject);console.log("inserted");
+				var category = questionList[index].category;
+			}
+
 		}
+	},
+
+	isQuestionExists : function(questionObject) {
+		var questionListFromDatabase = this.getAllQuestions();
+		var flag = 0;
+		for(var index in questionListFromDatabase) {
+			if(questionListFromDatabase.toLowerCase()==questionObject.questionStatement) {
+				flag = 1;
+				break;
+			}
+		}
+		return flag;
+
+	},
+
+	getAllQuestions : function() {
+		return database.question.getAllQuestionAsList();
 	},
 
 	parseCSVdata : function(data) {
