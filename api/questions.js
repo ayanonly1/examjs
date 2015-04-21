@@ -71,12 +71,28 @@ module.exports = {
 			};
 			if(!this.isQuestionExists(questionObject)) {
 				database.question.insertQuestionToDatabase(questionObject);console.log("inserted");
-				var category = questionList[index].category;
+				var categoryArray = questionList[index].category.split(",");
+				var categoryIdArray = this.checkAndInsertCategory(categoryArray);
+				this.insertQuestionToCategoryRelation(categoryIdArray, questionObject.questionId);
 			}
 
 		}
 	},
 
+	insertQuestionToCategoryRelation : function(categoryIdArray, questionId) {
+
+	},
+
+	checkAndInsertCategory : function(categoryArray) {
+		var categoryIdArray = [];
+		for(var index in categoryArray) {
+			var category = categoryArray[index];
+			var database = require('./database');
+			database.setDatabase('examdb');
+			categoryIdArray.push(database.question.checkAndInsertCategory(category));
+		}
+		return categoryIdArray;
+	},
 	isQuestionExists : function(questionObject) {
 		var questionListFromDatabase = this.getAllQuestions();
 		var flag = 0;
@@ -91,6 +107,8 @@ module.exports = {
 	},
 
 	getAllQuestions : function() {
+		var database = require('./database');
+		database.setDatabase('examdb');
 		return database.question.getAllQuestionAsList();
 	},
 

@@ -92,8 +92,17 @@ module.exports = {
 			var questionList = question.where("@questionId > 0").items;
 			return (questionList.length==0)?0:(questionList.length-1);
 		},
+		getMaxIdFromCategoryList : function() {
+			var locallydb = require('locallydb');
+			var parentObject = module.exports;
+			var db = new locallydb(parentObject.databaseName);
+			var category = db.collection('category');
+			var categoryList = category.where("@categoryId > 0").items;
+			return (categoryList.length==0)?0:(questionList.length-1);
+		},
 		getAllQuestionAsList : function() {
 			var locallydb = require('locallydb');
+			var db = new locallydb(this.databaseName);
 			var question = db.collection('question');
 			var questionObjectList = question.where("@questionId > 0").items;
 			var questionList = [];
@@ -101,6 +110,30 @@ module.exports = {
 				questionList.push(questionObjectList[index].questionStatement);
 			}
 			return questionList;
+		},
+		checkAndInsertCategory : function(category) {
+			var locallydb = require('locallydb');
+			var db = new locallydb(this.databaseName);
+			var categoryTable = db.collection('category');
+			var categoryObjectList = categoryTable.where("@categoryId > 0").items;
+			var flag = 0;
+			for(var index in categoryObjectList) {
+				if(categoryObjectList[index].categoryName == category) {
+					flag = index;
+					break;
+				}
+			}
+			if(flag == 0) {
+				var parentObject = module.exports;
+				var maxCategoryId = parentObject.getMaxIdFromCategoryList()+1;
+				var categoryObject = {
+					categoryId : maxCategoryId,
+					categoryName : category.toLowerCase()
+				};
+				parentObject.insertCategoryObject(categoryObject);
+				flag = maxCategoryId;
+			}
+			return flag;
 		}
 
 	}
