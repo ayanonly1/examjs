@@ -24,6 +24,7 @@
 
 */
 module.exports = {
+	questionListFromDatabase : [],
 	insertQuestionToDatabase : function(questionObject) {
 
 	},
@@ -52,11 +53,65 @@ module.exports = {
 
 	insertQuestionListToDatabase : function(questionList) {
 		var database = require('./database');
-		database.setDatabase('examdb');console.log("hello");
-		database.question.getMaxIdFromQuestionList();
-		for(var index in questionList) {
+		database.setDatabase('examdb');
+		for(var index=0; index<(questionList.length); index++) {
+			var maxQuestionId = database.question.getMaxIdFromQuestionList();
+			var questionObject = {
+				questionId : (maxQuestionId+1),
+				questionStatement : questionList[index].questionStatement,
+				option1 : questionList[index].option1,
+				option2 : questionList[index].option2,
+				option3 : questionList[index].option3,
+				option4 : questionList[index].option4,
+				option5 : questionList[index].option5,
+				answer : questionList[index].answer,
+				dificulty : questionList[index].dificulty,
+				createdOn : new Date().getTime(),
+				createdBy : questionList[index].createdBy
+			};
+			if(!this.isQuestionExists(questionObject)) {
+				database.question.insertQuestionToDatabase(questionObject);console.log("inserted");
+				var categoryArray = questionList[index].category.split(",");
+				var categoryIdArray = this.checkAndInsertCategory(categoryArray);
+				this.insertQuestionToCategoryRelation(categoryIdArray, questionObject.questionId);
+			}
 
 		}
+	},
+
+	insertQuestionToCategoryRelation : function(categoryIdArray, questionId) {
+		var database = require('./database');
+		database.setDatabase('examdb');
+		database.question.insertQuestionToCategoryRelation(categoryIdArray, questionId);
+	},
+
+	checkAndInsertCategory : function(categoryArray) {
+		var categoryIdArray = [];
+		for(var index in categoryArray) {
+			var category = categoryArray[index];
+			var database = require('./database');
+			database.setDatabase('examdb');
+			categoryIdArray.push(database.question.checkAndInsertCategory(category));
+		}
+		return categoryIdArray;
+	},
+	isQuestionExists : function(questionObject) {
+		var questionListFromDatabase = this.getAllQuestions();
+		var flag = 0;
+		for(var index in questionListFromDatabase) {
+			if(questionListFromDatabase.toLowerCase()==questionObject.questionStatement) {
+				flag = 1;
+				break;
+			}
+		}
+		return flag;
+
+	},
+
+	getAllQuestions : function() {
+		var database = require('./database');
+		database.setDatabase('examdb');
+		return database.question.getAllQuestionAsList();
 	},
 
 	parseCSVdata : function(data) {
@@ -73,7 +128,8 @@ module.exports = {
 				option5 : csvData[5],
 				answer : csvData[6],
 				dificulty : csvData[7],
-				category : csvData[8]
+				createdBy : csvData[8],
+				category : csvData[9]
 			};
 			questionsList.push(questionObject);
 		}
